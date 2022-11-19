@@ -1,0 +1,27 @@
+{
+  "name": "nus-money-backend",
+  "version": "1.0.0",
+  "description": "NUS Fintech course backend demo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lexxalsia/nus-course-backend.git"
+  },
+  "author": "Sia Yeong Kang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lexxalsia/nus-course-backend/issues"
+  },
+  "homepage": "https://github.com/lexxalsia/nus-course-backend#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-openid-connect": "^2.10.0",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.20"
+  }
+}
