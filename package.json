@@ -4,7 +4,9 @@
   "description": "NUS Fintech course backend demo",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon -r dotenv/config main.js dotenv_config_path=.env.local",
+    "start": "nodemon -r dotenv/config main.js dotenv_config_path=.env"
   },
   "repository": {
     "type": "git",
