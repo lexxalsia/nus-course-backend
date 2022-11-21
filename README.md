@@ -1,6 +1,7 @@
 # backend-demo
 
-NUS Fintech course backend demo
+NUS Fintech Backend
 
-To start app with local dotnev settings, type "npm run start:dev"
-To start app with production dotenv settings (usually in server), type "npm run start"
+To start app locally, type "npm run start:dev"
+
+Our Heroku is live: https://nus-money-b19.herokuapp.com/
