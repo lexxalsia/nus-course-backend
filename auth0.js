@@ -19,7 +19,7 @@ authRouter.get("/", (req, res) => {
   res.send(req.oidc.isAuthenticated() ? "Logged in" : "Logged out");
 });
 
-authRouter.get("/profile", requiresAuth(), (req, res) => {
+authRouter.get("/profile", requiresAuth(), requiresAuth(), (req, res) => {
   res.send(JSON.stringify(req.oidc.user));
 });
 
