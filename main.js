@@ -1,15 +1,21 @@
 const express = require("express");
 require("dotenv").config();
 
-const { router } = require("./api");
 const { auth, config, authRouter } = require("./auth0");
+const { router } = require("./api");
 
+// Register main App
 let app = express();
-app.use(express.json());
-app.use(router);
 
+// Set Express to parse JSON
+app.use(express.json());
+
+// Init auth
 app.use(auth(config));
+
+// Register routers
 app.use(authRouter);
+app.use(router);
 
 app.listen(process.env.PORT, (errors) => {
   if (errors) {

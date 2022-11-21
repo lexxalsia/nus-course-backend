@@ -1,7 +1,7 @@
 // SYK's version
 
 const express = require("express");
-const { requiresAuth } = require("express-openid-connect");
+const { auth, requiresAuth, config, authRouter } = require("./auth0");
 const data = require("./mock_data");
 
 let router = express.Router();
@@ -19,10 +19,43 @@ router.get("/users", requiresAuth(), (req, resp) => {
 });
 
 router.get("/users/:id", requiresAuth(), (req, resp) => {
-  resp.send(data.get_user_by_user_id(req.params.id));
+  // validate request
+  if (isNaN(parseInt(req.params.id))) {
+    resp.status(400).send("Bad Request.");
+  }
+
+  let user = data.get_user_by_user_id(req.params.id);
+
+  if (user == null || user == undefined) {
+    resp.status(404).send("Not Found.");
+  }
+
+  resp.send(user);
 });
 
 router.post("/users", requiresAuth(), (req, resp) => {
+  if (!req.body.first_name) {
+    resp.status(400).send("first_name is empty");
+  }
+  if (!req.body.last_name) {
+    resp.status(400).send("last_name is empty");
+  }
+  if (!req.body.email) {
+    resp.status(400).send("email is empty");
+  }
+  if (!req.body.user_id) {
+    resp.status(400).send("user_id is empty");
+  }
+  if (!req.body.phone) {
+    resp.status(400).send("phone is empty");
+  }
+  if (!req.body.plan_id) {
+    resp.status(400).send("plan_id is empty");
+  }
+  if (!req.body.signup_date) {
+    resp.status(400).send("signup_date is empty");
+  }
+
   let user = {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
@@ -32,7 +65,10 @@ router.post("/users", requiresAuth(), (req, resp) => {
     plan_id: req.body.plan_id,
     signup_date: req.body.signup_date,
   };
-  data.add_user(user);
+
+  try {
+    data.add_user(user);
+  } catch (err) {}
 
   resp.status(201).send(`User added`);
 });
