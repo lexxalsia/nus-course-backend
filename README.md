@@ -10,3 +10,7 @@ That's really funny ! ~ HP ~
 
 Our GCP is live: https://nus-course-backend-5i7iu7m5xa-uc.a.run.app
 Tested our GCP - managed to login, verified my own profile and logout successfully. ~ HP ~
+
+another version of our GCP for our backend is live on :
+https://nus-course-backend-popl5luxfq-uc.a.run.app
+Tested this 2nd version GCP : managed to login, verified my own profile, check users and logout successfully. ~ HP ~
