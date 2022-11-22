@@ -1,7 +1,7 @@
 // SYK's version
 
 const express = require("express");
-const { auth, requiresAuth, config, authRouter } = require("./auth0");
+const { requiresAuth, config } = require("./auth0");
 const data = require("./mock_data");
 
 let router = express.Router();
