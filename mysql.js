@@ -25,21 +25,76 @@ const dbConfig = {
 };
 
 // User
+var getUser = (email) => {
+  return new Promise((resolve, reject) => {
+    var connection = mysql.createConnection(dbConfig);
+    connection.connect();
+
+    connection.query(
+      ` SELECT Email, LastName, FirstName, Active, CreatedOn, ModifiedOn 
+        FROM Users WHERE Email = '${email}';`,
+      (err, results) => {
+        connection.end();
+
+        if (err) {
+          reject(err);
+        } else {
+          resolve(JSON.stringify(results[0]));
+        }
+      }
+    );
+  });
+};
+
 var addUser = (newUser) => {
   return new Promise((resolve, reject) => {
     var connection = mysql.createConnection(dbConfig);
     connection.connect();
 
     connection.query(
-      `INSERT INTO Users (Id, Email) 
+      ` INSERT INTO Users (Id, Email) 
         VALUES (uuid(), '${newUser.email}');`,
       (err) => {
         if (err) {
           reject(err);
         } else {
           connection.query(
-            `SELECT Id, Email, LastName, FirstName, Active 
-                  FROM Users WHERE Email = '${newUser.email}';`,
+            ` SELECT Id, Email, LastName, FirstName, Active 
+              FROM Users WHERE Email = '${newUser.email}';`,
+            (err, results) => {
+              connection.end();
+
+              if (err) {
+                reject(err);
+              } else {
+                resolve(JSON.stringify(results[0]));
+              }
+            }
+          );
+        }
+      }
+    );
+  });
+};
+
+var updateUser = (user) => {
+  return new Promise((resolve, reject) => {
+    var connection = mysql.createConnection(dbConfig);
+    connection.connect();
+
+    connection.query(
+      ` UPDATE Users SET
+        LastName = '${user.lastName}',
+        FirstName = '${user.firstName}',
+        Active = ${user.active}
+        WHERE Email = '${user.email}';`,
+      (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          connection.query(
+            ` SELECT Id, Email, LastName, FirstName, Active 
+              FROM Users WHERE Email = '${user.email}';`,
             (err, results) => {
               connection.end();
 
@@ -80,4 +135,4 @@ var getAccountBalance = (email) => {
   });
 };
 
-module.exports = { addUser, getAccountBalance };
+module.exports = { getUser, addUser, updateUser, getAccountBalance };
