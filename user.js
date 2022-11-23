@@ -1,4 +1,5 @@
 const express = require("express");
+const { requiresAuth } = require("express-openid-connect");
 const { getUser, addUser, updateUser } = require("./mysql");
 
 const controllerName = "User";
@@ -7,7 +8,7 @@ let userRouter = express.Router();
 
 // GET /User
 // Get user lastname, firstname, active status
-userRouter.get(`/${controllerName}`, (req, resp) => {
+userRouter.get(`/${controllerName}`, requiresAuth(), (req, resp) => {
   getUser(req.oidc.user.email).then(
     function (user) {
       resp.status(200).json(JSON.parse(user));
@@ -33,7 +34,7 @@ userRouter.post(`/${controllerName}`, (req, resp) => {
 
 // PUT /User
 // To update lastname, firstname, and active status
-userRouter.put(`/${controllerName}`, (req, resp) => {
+userRouter.put(`/${controllerName}`, requiresAuth(), (req, resp) => {
   updateUser(req.body).then(
     function (user) {
       resp.status(200).json(JSON.parse(user));

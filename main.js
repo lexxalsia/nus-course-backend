@@ -5,6 +5,8 @@ const { auth, config, authRouter } = require("./auth0");
 const { router } = require("./api");
 const { accountRouter } = require("./account");
 const { userRouter } = require("./user");
+const { transactionRouter } = require("./transaction");
+const { planRouter } = require("./plan");
 
 // Register main App
 let app = express();
@@ -20,6 +22,8 @@ app.use(authRouter);
 app.use(router);
 app.use(accountRouter);
 app.use(userRouter);
+app.use(transactionRouter);
+app.use(planRouter);
 
 app.listen(process.env.PORT, (errors) => {
   if (errors) {

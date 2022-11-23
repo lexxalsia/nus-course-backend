@@ -1,4 +1,5 @@
 const mysql = require("mysql");
+const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 
 const dbConfig = {
@@ -135,4 +136,183 @@ var getAccountBalance = (email) => {
   });
 };
 
-module.exports = { getUser, addUser, updateUser, getAccountBalance };
+// Transaction
+var getTransactions = (email) => {
+  return new Promise((resolve, reject) => {
+    var connection = mysql.createConnection(dbConfig);
+    connection.connect();
+
+    connection.query(
+      ` SELECT t.Id, t.Date, t.Amount, t.Description, t.Category, t.Account
+        FROM Transactions t INNER JOIN 
+        Users u ON u.Id = t.UserId 
+        WHERE u.Email = '${email}'
+        ORDER BY t.Date DESC;`,
+      (err, results) => {
+        connection.end();
+
+        if (err) {
+          reject(err);
+        } else {
+          resolve(JSON.stringify(results));
+        }
+      }
+    );
+  });
+};
+
+// Plan
+var getPlans = (email) => {
+  return new Promise((resolve, reject) => {
+    var connection = mysql.createConnection(dbConfig);
+    connection.connect();
+
+    connection.query(
+      ` SELECT p.Id, p.Name, p.Active, p.CreatedOn, p.ModifiedOn
+        FROM Plans p INNER JOIN 
+        Users u ON u.Id = p.UserId 
+        WHERE u.Email = '${email}'
+        ORDER BY p.CreatedOn DESC;`,
+      (err, results) => {
+        connection.end();
+
+        if (err) {
+          reject(err);
+        } else {
+          resolve(JSON.stringify(results));
+        }
+      }
+    );
+  });
+};
+
+var getPlan = (pid, email) => {
+  return new Promise((resolve, reject) => {
+    var connection = mysql.createConnection(dbConfig);
+    connection.connect();
+
+    connection.query(
+      ` SELECT p.Id, p.Name, p.Settings, p.Active, p.CreatedOn, p.ModifiedOn
+        FROM Plans p INNER JOIN 
+        Users u ON u.Id = p.UserId 
+        WHERE u.Email = '${email}' AND p.Id = '${pid}';`,
+      (err, results) => {
+        connection.end();
+
+        if (err) {
+          reject(err);
+        } else {
+          resolve(JSON.stringify(results[0]));
+        }
+      }
+    );
+  });
+};
+
+var addPlan = (newPlan, email) => {
+  const newId = uuidv4();
+
+  return new Promise((resolve, reject) => {
+    var connection = mysql.createConnection(dbConfig);
+    connection.connect();
+
+    connection.query(
+      ` INSERT INTO Plans (Id, UserId, Name, Settings) 
+        SELECT '${newId}', Id, '${newPlan.name}', '${newPlan.settings}' FROM Users 
+        WHERE Email = '${email}';`,
+      (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          connection.query(
+            ` SELECT p.Id, p.Name, p.Settings, p.Active
+              FROM Plans p
+              INNER JOIN Users u ON u.Id = p.UserId
+              WHERE p.Id = '${newId}' AND u.Email = '${email}';`,
+            (err, results) => {
+              connection.end();
+
+              if (err) {
+                reject(err);
+              } else {
+                resolve(JSON.stringify(results[0]));
+              }
+            }
+          );
+        }
+      }
+    );
+  });
+};
+
+var updatePlan = (plan, email) => {
+  return new Promise((resolve, reject) => {
+    var connection = mysql.createConnection(dbConfig);
+    connection.connect();
+
+    connection.query(
+      ` UPDATE Plans INNER JOIN Users ON Users.Id = Plans.UserId
+        SET 
+        Plans.Name = '${plan.name}',
+        Plans.Settings = '${plan.settings}',
+        Plans.Active = ${plan.active}
+        WHERE Plans.Id = '${plan.id}' AND Users.Email = '${email}';`,
+      (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          connection.query(
+            ` SELECT p.Id, p.Name, p.Settings, p.Active
+              FROM Plans p
+              INNER JOIN Users u ON u.Id = p.UserId
+              WHERE p.Id = '${plan.id}' AND u.Email = '${email}';`,
+            (err, results) => {
+              connection.end();
+
+              if (err) {
+                reject(err);
+              } else {
+                resolve(JSON.stringify(results[0]));
+              }
+            }
+          );
+        }
+      }
+    );
+  });
+};
+
+var deletePlan = (pid, email) => {
+  return new Promise((resolve, reject) => {
+    var connection = mysql.createConnection(dbConfig);
+    connection.connect();
+
+    connection.query(
+      ` DELETE p 
+        FROM Plans p INNER JOIN Users u ON u.Id = p.UserId
+        WHERE p.Id = '${pid}' AND u.Email = '${email}';`,
+      (err, results) => {
+        connection.end();
+
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results["affectedRows"] != 0 ? true : false);
+        }
+      }
+    );
+  });
+};
+
+module.exports = {
+  getUser,
+  addUser,
+  updateUser,
+  getAccountBalance,
+  getTransactions,
+  getPlans,
+  getPlan,
+  addPlan,
+  updatePlan,
+  deletePlan,
+};
