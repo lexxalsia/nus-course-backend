@@ -4,6 +4,7 @@ require("dotenv").config();
 const { auth, config, authRouter } = require("./auth0");
 const { router } = require("./api");
 const { accountRouter } = require("./account");
+const { userRouter } = require("./user");
 
 // Register main App
 let app = express();
@@ -18,6 +19,7 @@ app.use(auth(config));
 app.use(authRouter);
 app.use(router);
 app.use(accountRouter);
+app.use(userRouter);
 
 app.listen(process.env.PORT, (errors) => {
   if (errors) {
