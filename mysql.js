@@ -8,6 +8,7 @@ const dbConfig = {
   user: process.env.DBUSER,
   password: process.env.DBPASSWD,
   database: process.env.DBNAME,
+  socketPath: process.env.INSTANCE_UNIX_SOCKET || "",
   multipleStatements: true,
   typeCast: function castField(field, useDefaultTypeCasting) {
     // We only want to cast bit fields that have a single-bit in them. If the field
