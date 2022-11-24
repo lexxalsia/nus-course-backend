@@ -137,6 +137,29 @@ var getAccountBalance = (email) => {
   });
 };
 
+var addAccountBalance = (balance, email) => {
+  return new Promise((resolve, reject) => {
+    var connection = mysql.createConnection(dbConfig);
+    connection.connect();
+
+    connection.query(
+      ` INSERT INTO Balances (Id, UserId, Source, Balance) 
+        SELECT uuid(), Id, 'Mock', ${balance} 
+        FROM Users WHERE Email = '${email}'
+        ON DUPLICATE KEY UPDATE Balance = ${balance};`,
+      (err, results) => {
+        connection.end();
+
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results["affectedRows"] != 0 ? true : false);
+        }
+      }
+    );
+  });
+};
+
 // Transaction
 var getTransactions = (email) => {
   return new Promise((resolve, reject) => {
@@ -156,6 +179,48 @@ var getTransactions = (email) => {
           reject(err);
         } else {
           resolve(JSON.stringify(results));
+        }
+      }
+    );
+  });
+};
+
+var addTransactions = (transactions, email) => {
+  return new Promise((resolve, reject) => {
+    var connection = mysql.createConnection(dbConfig);
+    connection.connect();
+
+    connection.query(
+      ` SELECT Id 
+        FROM Users WHERE Email = '${email}';`,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          const id = JSON.parse(JSON.stringify(results[0])).Id;
+
+          connection.query(
+            ` INSERT INTO Transactions (UserId, Date, Amount, Description, Category, Account) VALUES ? `,
+            [
+              transactions.map((transaction) => [
+                id,
+                transaction.date,
+                transaction.amount,
+                transaction.description,
+                transaction.category,
+                transaction.account,
+              ]),
+            ],
+            (err, results) => {
+              connection.end();
+
+              if (err) {
+                reject(err);
+              } else {
+                resolve(results["affectedRows"] != 0 ? true : false);
+              }
+            }
+          );
         }
       }
     );
@@ -310,7 +375,9 @@ module.exports = {
   addUser,
   updateUser,
   getAccountBalance,
+  addAccountBalance,
   getTransactions,
+  addTransactions,
   getPlans,
   getPlan,
   addPlan,

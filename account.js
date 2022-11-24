@@ -1,7 +1,11 @@
 const express = require("express");
 const { requiresAuth } = require("./auth0");
 const { generateBalance, generateTransactions } = require("./dataHelper");
-const { getAccountBalance } = require("./mysql");
+const {
+  getAccountBalance,
+  addAccountBalance,
+  addTransactions,
+} = require("./mysql");
 
 const controllerName = "account";
 
@@ -11,14 +15,27 @@ let accountRouter = express.Router();
 // A mock API that generate some transactions and current bank balance
 accountRouter.get(`/${controllerName}/connect`, requiresAuth(), (req, resp) => {
   // 1. Mock an account balance
-  let balance = generateBalance();
+  const balance = generateBalance();
 
   // 2. Mock transactions (Past 3 months till now)
-  let transactions = generateTransactions();
+  const transactions = generateTransactions();
 
-  resp
-    .status(200)
-    .send(transactions.sort((a, b) => b.date.getTime() - a.date.getTime()));
+  Promise.all([
+    addAccountBalance(balance, req.oidc.user.email),
+    addTransactions(
+      transactions.sort((a, b) => a.date.getTime() - b.date.getTime()),
+      req.oidc.user.email
+    ),
+  ]).then(
+    function (values) {
+      values[0] && values[1]
+        ? resp.status(200).send()
+        : resp.status(500).send();
+    },
+    function (error) {
+      resp.status(500).send(error || `Failed to save mock data.`);
+    }
+  );
 });
 
 // GET /account/balance
