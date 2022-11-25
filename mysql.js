@@ -161,7 +161,18 @@ var addAccountBalance = (balance, email) => {
 };
 
 // Transaction
-var getTransactions = (email) => {
+var getTransactions = (startDate, endDate, category, description, email) => {
+  const params = [
+    startDate,
+    startDate,
+    endDate,
+    endDate,
+    category,
+    category,
+    description,
+    "%" + description + "%",
+  ];
+
   return new Promise((resolve, reject) => {
     var connection = mysql.createConnection(dbConfig);
     connection.connect();
@@ -171,7 +182,36 @@ var getTransactions = (email) => {
         FROM Transactions t INNER JOIN 
         Users u ON u.Id = t.UserId 
         WHERE u.Email = '${email}'
+        AND t.Date >= IF (? IS NOT NULL, ?, '1000-01-01')
+        AND t.Date <= IF (? IS NOT NULL, ?, '2999-12-31')
+        AND (? IS NULL OR t.Category = ?)
+        AND (? IS NULL OR t.Description LIKE ?)
         ORDER BY t.Date DESC;`,
+      params,
+      (err, results) => {
+        connection.end();
+
+        if (err) {
+          reject(err);
+        } else {
+          resolve(JSON.stringify(results));
+        }
+      }
+    );
+  });
+};
+
+var getTransactionsByCategory = (email) => {
+  return new Promise((resolve, reject) => {
+    var connection = mysql.createConnection(dbConfig);
+    connection.connect();
+
+    connection.query(
+      ` SELECT ABS(SUM(t.Amount)) AS Amount, t.Category
+        FROM Transactions t INNER JOIN 
+        Users u ON u.Id = t.UserId 
+        WHERE u.Email = '${email}' AND t.Date >= date_add(date_add(LAST_DAY(CURDATE()),interval 1 DAY),interval -1 MONTH)
+        GROUP BY t.Category;`,
       (err, results) => {
         connection.end();
 
@@ -377,6 +417,7 @@ module.exports = {
   getAccountBalance,
   addAccountBalance,
   getTransactions,
+  getTransactionsByCategory,
   addTransactions,
   getPlans,
   getPlan,
