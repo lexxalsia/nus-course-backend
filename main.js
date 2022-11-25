@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
 
 const { auth, config, authRouter } = require("./auth0");
@@ -10,6 +11,9 @@ const { planRouter } = require("./plan");
 
 // Register main App
 let app = express();
+
+// Enable All CORS Requests
+app.use(cors());
 
 // Set Express to parse JSON
 app.use(express.json());
