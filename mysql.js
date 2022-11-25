@@ -240,7 +240,7 @@ var addTransactions = (transactions, email) => {
           const id = JSON.parse(JSON.stringify(results[0])).Id;
 
           connection.query(
-            ` INSERT INTO Transactions (UserId, Date, Amount, Description, Category, Account) VALUES ? `,
+            ` INSERT IGNORE INTO Transactions (UserId, Date, Amount, Description, Category, Account) VALUES ? `,
             [
               transactions.map((transaction) => [
                 id,
