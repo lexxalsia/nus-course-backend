@@ -16,6 +16,13 @@ const config = {
     login: false,
     postLogoutRedirect: process.env.POST_LOGOUT_REDIRECT,
   },
+  session: {
+    cookie: {
+      sameSite: "None",
+      secure: process.env.SECURE_COOKIE,
+      httpOnly: true,
+    },
+  },
 };
 
 // req.isAuthenticated is provided from the auth router
