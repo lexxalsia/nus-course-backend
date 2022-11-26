@@ -18,8 +18,8 @@ const config = {
   },
   session: {
     cookie: {
-      sameSite: "None",
-      secure: process.env.SECURE_COOKIE,
+      sameSite: process.env.COOKIE_SAMESITE,
+      secure: process.env.COOKIE_SECURE,
       httpOnly: true,
     },
   },
