@@ -12,11 +12,19 @@ const config = {
   baseURL: process.env.BASE_URL,
   clientID: process.env.CLIENT_ID,
   issuerBaseURL: process.env.ISSUER_BASE_URL,
+  routes: {
+    login: false,
+    postLogoutRedirect: process.env.POST_LOGOUT_REDIRECT,
+  },
 };
 
 // req.isAuthenticated is provided from the auth router
 authRouter.get("/", (req, res) => {
   res.send(req.oidc.isAuthenticated() ? "Logged in" : "Logged out");
+});
+
+authRouter.get("/login", (req, res) => {
+  res.oidc.login({ returnTo: process.env.POST_LOGIN_REDIRECT });
 });
 
 authRouter.get("/profile", requiresAuth(), (req, res) => {
