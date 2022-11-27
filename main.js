@@ -15,8 +15,12 @@ let app = express();
 // Enable All CORS Requests
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:5500",
+      "https://nus-course-frontend.netlify.app",
+    ],
     methods: ["GET", "POST", "DELETE", "PUT"],
+    credentials: true,
   })
 );
 
