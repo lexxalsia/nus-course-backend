@@ -13,7 +13,13 @@ const { planRouter } = require("./plan");
 let app = express();
 
 // Enable All CORS Requests
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://*", "http://*"],
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    credentials: true,
+  })
+);
 
 // Set Express to parse JSON
 app.use(express.json());
