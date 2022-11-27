@@ -15,9 +15,8 @@ let app = express();
 // Enable All CORS Requests
 app.use(
   cors({
-    origin: ["https://*", "http://*"],
+    origin: "*",
     methods: ["GET", "POST", "DELETE", "PUT"],
-    credentials: true,
   })
 );
 
