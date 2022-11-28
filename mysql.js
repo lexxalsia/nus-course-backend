@@ -201,7 +201,9 @@ var getTransactions = (startDate, endDate, category, description, email) => {
   });
 };
 
-var getTransactionsByCategory = (email) => {
+var getTransactionsByCategory = (startDate, endDate, email) => {
+  const params = [startDate, startDate, endDate, endDate];
+
   return new Promise((resolve, reject) => {
     var connection = mysql.createConnection(dbConfig);
     connection.connect();
@@ -210,8 +212,12 @@ var getTransactionsByCategory = (email) => {
       ` SELECT ABS(SUM(t.Amount)) AS Amount, t.Category
         FROM Transactions t INNER JOIN 
         Users u ON u.Id = t.UserId 
-        WHERE u.Email = '${email}' AND t.Date >= date_add(date_add(LAST_DAY(CURDATE()),interval 1 DAY),interval -1 MONTH)
-        GROUP BY t.Category;`,
+        WHERE u.Email = '${email}'
+        AND t.Date >= IF (? IS NOT NULL, ?, '1000-01-01')
+        AND t.Date <= IF (? IS NOT NULL, ?, '2999-12-31')
+        GROUP BY t.Category
+        ORDER BY Amount DESC;`,
+      params,
       (err, results) => {
         connection.end();
 

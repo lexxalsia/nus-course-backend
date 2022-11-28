@@ -40,7 +40,10 @@ transactionRouter.get(
   `/${controllerName}/Category`,
   requiresAuth(),
   (req, resp) => {
-    getTransactionsByCategory(req.oidc.user.email).then(
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+
+    getTransactionsByCategory(startDate, endDate, req.oidc.user.email).then(
       function (transactions) {
         if (transactions === "[]") {
           resp.status(204).send();
