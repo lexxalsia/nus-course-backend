@@ -5,6 +5,7 @@ const {
   getAccountBalance,
   addAccountBalance,
   addTransactions,
+  getAccountOverview,
 } = require("./mysql");
 
 const controllerName = "account";
@@ -50,5 +51,26 @@ accountRouter.get(`/${controllerName}/balance`, requiresAuth(), (req, resp) => {
     }
   );
 });
+
+// GET /account/overview
+// Return the account overview with top expenses
+accountRouter.get(
+  `/${controllerName}/Overview`,
+  requiresAuth(),
+  (req, resp) => {
+    getAccountOverview(req.oidc.user.email).then(
+      function (categories) {
+        if (categories === "[]") {
+          resp.status(204).send();
+        } else {
+          resp.status(200).json(JSON.parse(categories));
+        }
+      },
+      function (error) {
+        resp.status(500).send(error || `Failed to get account overview.`);
+      }
+    );
+  }
+);
 
 module.exports = { accountRouter };
