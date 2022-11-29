@@ -15,3 +15,4 @@ another version of our GCP for our backend is live on :
 https://nus-course-backend-popl5luxfq-uc.a.run.app
 Tested this 2nd version GCP : managed to login, verified my own profile, check users and logout successfully. ~ HP ~
 
+### to start up BE server : npm run start:dev --> localhost:3000/login
