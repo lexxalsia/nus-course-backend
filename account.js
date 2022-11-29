@@ -59,11 +59,26 @@ accountRouter.get(
   requiresAuth(),
   (req, resp) => {
     getAccountOverview(req.oidc.user.email).then(
-      function (categories) {
+      function (results) {
+        let categories = JSON.parse(results[0]);
+        let settings = JSON.parse(JSON.parse(results[1]).Settings);
+
+        categories.map((category) => {
+          category["Sum"] = Math.abs(category["Sum"]);
+
+          let match = settings.find(
+            (setting) => setting.Category === category.Category
+          );
+
+          if (match) {
+            category["Target"] = match.Value || 0;
+          }
+        });
+
         if (categories === "[]") {
           resp.status(204).send();
         } else {
-          resp.status(200).json(JSON.parse(categories));
+          resp.status(200).json(categories);
         }
       },
       function (error) {

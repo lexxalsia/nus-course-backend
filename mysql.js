@@ -173,13 +173,27 @@ var getAccountOverview = (email) => {
         GROUP BY t.Category 
         ORDER BY Sum ASC
         LIMIT 5;`,
-      (err, results) => {
-        connection.end();
-
+      (err, categories) => {
         if (err) {
           reject(err);
         } else {
-          resolve(JSON.stringify(results));
+          connection.query(
+            ` SELECT p.Settings 
+              FROM Plans p INNER JOIN Users u ON u.Id = p.UserId 
+              WHERE u.Email = '${email}' AND p.Active = 1;`,
+            (err, settings) => {
+              connection.end();
+
+              if (err) {
+                reject(err);
+              } else {
+                resolve([
+                  JSON.stringify(categories),
+                  JSON.stringify(settings[0]),
+                ]);
+              }
+            }
+          );
         }
       }
     );
