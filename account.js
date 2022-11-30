@@ -72,6 +72,8 @@ accountRouter.get(
 
           if (match) {
             category["Target"] = match.Value || 0;
+          } else {
+            category["Target"] = 0;
           }
         });
 
