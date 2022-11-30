@@ -61,7 +61,10 @@ accountRouter.get(
     getAccountOverview(req.oidc.user.email).then(
       function (results) {
         let categories = JSON.parse(results[0]);
-        let settings = JSON.parse(JSON.parse(results[1]).Settings);
+        let settings =
+          results[1] === undefined
+            ? []
+            : JSON.parse(JSON.parse(results[1]).Settings);
 
         categories.map((category) => {
           category["Sum"] = Math.abs(category["Sum"]);
