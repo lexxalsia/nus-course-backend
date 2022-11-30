@@ -369,14 +369,25 @@ var addPlan = (newPlan, email) => {
     connection.connect();
 
     connection.query(
-      ` 
-        INSERT INTO Plans (Id, UserId, Name, Settings) 
+      ` INSERT INTO Plans (Id, UserId, Name, Settings) 
         SELECT '${newId}', Id, '${newPlan.name}', '${newPlan.settings}' FROM Users 
         WHERE Email = '${email}';`,
       (err) => {
         if (err) {
           reject(err);
         } else {
+          connection.query(
+            ` UPDATE Plans INNER JOIN Users ON Users.Id = Plans.UserId
+              SET 
+              Plans.Active = 0
+              WHERE Plans.Id <> '${newId}' AND Users.Email = '${email}';`,
+            (err) => {
+              if (err) {
+                reject(err);
+              }
+            }
+          );
+
           connection.query(
             ` SELECT p.Id, p.Name, p.Settings, p.Active
               FROM Plans p
