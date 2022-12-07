@@ -1,11 +1,16 @@
 name:  Whatsapp Notify
 on:
+  push:
+    branches: [ master ]
   issue_comment:
     types: created
+    branches: [ master ]
   pull_request:
     types: [opened, closed, edited, ready_for_review, review_requested, reopened]
+    branches: [ master ]
   issues:
     types: [opened, edited, pinned, closed, reopened, assigned, labeled]
+    branches: [ master ]
   page_build:
   watch:
     types: [started]
