@@ -1,5 +1,3 @@
-# backend-demo
-
 NUS Fintech Backend
 
 To start app locally, type "npm run start:dev"
