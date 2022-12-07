@@ -1,0 +1,16 @@
+name: send-alert
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    
+jobs:
+  send-alert:
+    name: Send alert with Twilio
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Twilio-Whatsapp Action
+      uses: mdb571/wa-action@v1.0
