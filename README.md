@@ -1,16 +1,17 @@
-NUS Fintech Backend
+# NUS Money Backend
 
-To start app locally, type "npm run start:dev"
+To start app locally, use `npm run start:dev`
 
-~~Our Heroku is live: https://nus-money-b19.herokuapp.com/~~
-Our Heroku was short lived. You did your best and will be remembered. - YK
-That's really funny ! ~ HP ~
+GCP Cloud Run endpoint: https://nus-course-backend-5i7iu7m5xa-uc.a.run.app
 
-Our GCP is live: https://nus-course-backend-5i7iu7m5xa-uc.a.run.app
-Tested our GCP - managed to login, verified my own profile and logout successfully. ~ HP ~
+CI/CD pipeline is setup via:
 
-another version of our GCP for our backend is live on :
-https://nus-course-backend-popl5luxfq-uc.a.run.app
-Tested this 2nd version GCP : managed to login, verified my own profile, check users and logout successfully. ~ HP ~
+- Setting up of Cloud Build instance alongside with New Cloud Run (CI)
+  A new instance of Cloud Build will be created to build container image. Configure source (Repository & Branch) and event (Push) to listen to. This will require Git credentials and whitelisting respective repository to deploy.
 
-### to start up BE server : npm run start:dev --> localhost:3000/login
+- Deployment into Cloud Run (CD)
+  Once a new image is ready, it will be made available for deployment into Cloud Run instance.
+
+Cloud Run will checks the existence of `Procfile` and run the scripts that supply after `web:`, in this case, `npm run start`. In order to run the application, you will also required to safely store the secrets in Cloud Run configuration either using environment variables or referring to Secrets Manager. List of secrets to configure can be found in `.env_sample`.
+
+For any push into main branch, a Whatsapp notification will be sent using Twilio sandbox number.
