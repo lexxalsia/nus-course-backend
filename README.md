@@ -1,4 +1,4 @@
-# NUS Money Backend has changed
+# NUS Money Backend
 
 To start app locally, use `npm run start:dev`
 
